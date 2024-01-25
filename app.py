@@ -4,28 +4,29 @@ import plotly.graph_objects as go
 import json
 import pandas as pd
 import plotly
-from vigilant_dev.utils import get_color_for_label, normalize_ratings
-from vigilant_dev.workflow import process_courses, perform_clustering  # Adjust the import according to your package structure
+from vigilant_dev.utils import normalize_ratings
+from vigilant_dev.visualization import get_color_for_label
+from vigilant_dev.workflow import process_courses, perform_clustering  
 
 app = FastAPI()
 
-# Replace 'your_data.csv' with the path to your actual data file
 DATA_FILE = 'personal_dev_resources.csv'
 
+# predetermined number of clusters for now, 
+# perhaps this should be configured via hierarchical clustering instead
 n_clusters = 4
 
 def create_plot():
     try:
-        # Process your data and get the reduced vectors, descriptions, and links
+        # Process data and get the reduced vectors, descriptions, and links
         df, mapping = process_courses(DATA_FILE)
-        # Assume the reduced vectors are stored in a column named 'reduced_vectors'
         vectors = df['reduced_vectors'].tolist()
         descriptions = df['description'].tolist()
         links = df['link'].tolist()
         titles = df['title'].tolist()
 
         # Perform clustering
-        cluster_labels = perform_clustering(vectors, n_clusters)  # Adjust n_clusters as needed
+        cluster_labels = perform_clustering(vectors, n_clusters)  
 
         normalized_ratings = normalize_ratings(df['rating'].tolist())
 
