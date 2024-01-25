@@ -1,0 +1,10 @@
+title,description,rating,link
+"How to build your own LLM","Deep Learning, Large Language Models, Neural Nets, Python",4,http://example.com/course/advanced-ml
+"Leadership and Team Management Skills","Personal development, product owner, team building and management, leadership",3.5,http://example.com/course/leadership
+"Web Development","Web Development with HTML, CSS, and JavaScript",4,http://example.com/course/web-dev
+"Timeseries Forecasting","timeseries forecasting, python, data science, statistics, modeling",4.5,http://example.com/course/data-analysis
+"Introduction to Neural Nets","neural nets, python, deep learning",4.5,http://example.com/course/data-analysis
+"Bayesian Modeling Methods","Bayesian statistical modeling, python",4.7,http://example.com/course/data-analysis
+"How to build an API","API, Application Programming interface, software engineering, webapp, python",4,http://example.com/course/data-analysis
+"Using Generative AI","using generative artifical intelligence, prompt engineering, chatgpt",3,http://example.com/course/data-analysis
+"Soft Skills for Stakeholder Communication","soft skills for business stakeholder communication",4,http://example.com/course/data-analysis
