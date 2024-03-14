@@ -1,11 +1,12 @@
-numpy
-pandas
-matplotlib
-plotly
-transformers
-torch
-scikit-learn
-fastapi
-uvicorn
-nltk
+numpy==1.26.3
+pandas==2.2.0
+matplotlib==3.8.2
+plotly==5.18.0
+transformers==4.37.1
+torch==2.1.2
+scikit-learn==1.4.0
+nltk==3.8.1
+streamlit==1.29.0
+streamlit-plotly-events==0.0.6
+
 

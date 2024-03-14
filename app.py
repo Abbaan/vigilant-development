@@ -1,48 +1,49 @@
-from fastapi import FastAPI, HTTPException
-from fastapi.responses import HTMLResponse
-
-import json
+import streamlit as st
 import plotly
 from vigilant_dev.visualization import create_plot
+from vigilant_dev.workflow import process_courses
+from vigilant_dev.utils import perform_clustering
+from streamlit_plotly_events import plotly_events
 
-app = FastAPI()
+st.set_page_config(layout="wide")
 
-@app.get("/", response_class=HTMLResponse)
-async def get_plot():
-    try:
-        fig = create_plot()
-        graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-        return f"""
-        <html>
-            <head>
-                <title>3D Course Visualization</title>
-                <style>
-                    html, body {{
-                        margin: 0;
-                        padding: 0;
-                        height: 100%;
-                    }}
-                    #divPlotly {{
-                        height: 100vh;  /* 100% of the viewport height */
-                        width: 100vw;   /* 100% of the viewport width */
-                    }}
-                </style>
-            </head>
-            <body>
-                <div id='divPlotly'></div>
-                <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
-                <script type='text/javascript'>
-                    var graphs = {graphJSON};
-                    Plotly.newPlot('divPlotly', graphs, {{
-                        responsive: true
-                    }});
-                </script>
-            </body>
-        </html>
-        """
-    except HTTPException as e:
-        return f"<html><body><h2>Error: {e.detail}</h2></body></html>"
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+
+# Function to read and return the content of the Markdown file
+def read_markdown_file(markdown_file_path):
+    with open(markdown_file_path, 'r') as file:
+        return file.read()
+    
+# Path to your Markdown files
+markdown_file_path = 'learning_resources'
+
+@st.cache_data
+def process_logic(markdown_file_path, n_clusters):
+    df = process_courses(markdown_file_path)
+    cluster_labels = perform_clustering(df['reduced_vectors'].tolist(), n_clusters)
+    return df, cluster_labels
+
+
+def get_md_file_name(df, curve_number):
+    return df.iloc[curve_number]['filename']
+
+with st.sidebar:
+    n_clusters = st.slider(min_value=2, max_value=8, value=3, label='Number of Clusters')
+
+
+df, cluster_labels = process_logic(markdown_file_path, n_clusters)
+fig = create_plot(n_clusters, df, cluster_labels)
+
+                          
+col1, col2 = st.columns([2,1])
+
+with col1:
+    selected_points = plotly_events(fig)
+
+with col2:
+    if selected_points:
+        file_name = get_md_file_name(df, int(selected_points[0]['curveNumber']))
+        markdown_content = read_markdown_file('learning_resources/' + file_name)
+        st.markdown(markdown_content, unsafe_allow_html=True)
+    else:
+        st.markdown('Select a learning resource to view its content.')
