@@ -5,6 +5,7 @@ import torch
 import pandas as pd
 from typing import List
 from sklearn.cluster import KMeans
+import numpy as np
 
 
 
@@ -67,9 +68,37 @@ class ClusterStrategy(ABC):
 class KMeansClustering(ClusterStrategy):
     """Concrete implementation of a KMeans clustering strategy."""
 
-    def cluster(self, data, n_clusters) -> List[int]:
-        """Cluster the data using KMeans."""
+    def __init__(self):
+        """Initialize the KMeans clustering strategy."""
+        self.state = 'initialized'
+
+    def cluster(self, vectors, n_clusters) -> List[int]:
+        """Cluster the vectors into n clusters using KMeans."""
         kmeans = KMeans(n_clusters)
-        kmeans.fit(data)
-        labels = kmeans.labels_
-        return labels
+        kmeans.fit(vectors)
+        self.labels = kmeans.labels_
+        self.vectors = vectors
+        self.state = 'clustered'
+        return self.labels
+    
+    def calculate_cluster_centroids(self):
+        if self.state != 'clustered':
+            raise ValueError("Data has not been clustered yet.")
+        cluster_centers = {}
+        for label, vector in zip(self.labels, self.vectors):
+            cluster_centers.setdefault(label, []).append(vector)
+        return {label: np.mean(points, axis=0) for label, points in cluster_centers.items()}
+    
+    def convert_label_to_color(self, label):
+        if self.state != 'clustered':
+            raise ValueError("Data has not been clustered yet.")
+        # Define a list of colors in RGBA format (with full opacity by default)
+        colors = [
+            'rgba(255, 0, 0, 1)',   # Red
+            'rgba(0, 255, 0, 1)',   # Green
+            'rgba(0, 0, 255, 1)',   # Blue
+            'rgba(128, 0, 128, 1)', # Purple
+            'rgba(255, 165, 0, 1)', # Orange
+            # ... add more colors as needed ...
+        ]
+        return colors[label % len(colors)]

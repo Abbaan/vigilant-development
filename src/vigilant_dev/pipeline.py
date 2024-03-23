@@ -23,7 +23,7 @@ class Pipeline(ABC):
         pass
 
     @abstractmethod
-    def run_algorithm(self):
+    def run_cluster_algorithm(self):
         """Run the algorithm."""
         pass
         
@@ -54,15 +54,15 @@ class ClusteringPipeline(Pipeline):
     def transform_data(self):
         """Transform the data."""
         scibert_model = SciBert()
-        self.df = self.learning_resources.to_dataframe()
-        vectors = self.df['description'].apply(scibert_model.embed)
+        self.transformed_data = self.learning_resources.to_dataframe()
+        vectors = self.transformed_data['description'].apply(scibert_model.embed)
 
         pca_reduction = PCAReduction()
-        reduced_vectors_list = pca_reduction.reduce_dimensionality(self.df, vectors.tolist())
-        self.df['reduced_vectors'] = reduced_vectors_list
+        reduced_vectors_list = pca_reduction.reduce_dimensionality(self.transformed_data, vectors.tolist())
+        self.transformed_data['reduced_vectors'] = reduced_vectors_list
 
 
-    def run_algorithm(self, n_clusters):
+    def run_cluster_algorithm(self, n_clusters):
         """Run the algorithm."""
         labels = self.cluster_strategy.cluster(self.df['reduced_vectors'], n_clusters)
         return labels
@@ -73,4 +73,4 @@ class ClusteringPipeline(Pipeline):
         self.load_data()
         self.clean_data()
         self.transform_data()
-        self.run_algorithm()
+        self.run_cluster_algorithm()
