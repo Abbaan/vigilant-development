@@ -1,22 +1,29 @@
-from dataclasses import dataclass
-from typing import Optional
+from pydantic import BaseModel, validator
 import pandas as pd
 
-@dataclass
-class LearningResource:
+
+class LearningResource(BaseModel):
     title: str
     description: str
-    url: str    
+    url: str   
+
+    @validator('url')
+    def check_url(cls, value):
+        if not value.startswith('http'):
+            raise ValueError('URL must start with http')
+        return value 
 
 
-@dataclass
-class LearningResourceCollection:
+class LearningResourceCollection(BaseModel):
     resources: list[LearningResource]
     
     def add_resource(self, resource: LearningResource):
         self.resources.append(resource)
-
-    def to_dataframe(self) -> pd.DataFrame:
-        return pd.DataFrame([resource.__dict__ for resource in self.resources])
+    
+    def to_dataframe(self):
+        return pd.DataFrame([resource.dict() for resource in self.resources])
+    
+    def __iter__(self):
+        return iter(self.resources)
 
     

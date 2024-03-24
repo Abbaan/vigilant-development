@@ -39,15 +39,15 @@ class ClusterPlotMaker(PlotMaker):
         # Get the reduced vectors, descriptions, and links
         vectors = self.transformed_data['reduced_vectors'].tolist()
         descriptions = self.transformed_data['description'].tolist()
-        links = self.transformed_data['link'].tolist()
+        links = self.transformed_data['url'].tolist()
         titles = self.transformed_data['title'].tolist()
 
         # Create Plotly figure
         self.fig = go.Figure()
 
        # Add each point and a line from the origin to the point
-        for v, title, link, label in zip(vectors, titles, links, self.cluster_labels):
-            base_color = self.cluster_strategy.convert_to_color(label)
+        for v, title, link, label in zip(vectors, titles, links, self.cluster_strategy.cluster_labels):
+            base_color = self.cluster_strategy.convert_label_to_color(label)
             # Extract RGB components and update the alpha value based on rating
             r, g, b, _ = base_color.strip('rgba()').split(',')
             alpha = 0.7  # Adjust opacity based on rating

@@ -38,7 +38,7 @@ class HeadingBasedExtraction(DataExtractionStrategy):
             description = description_match.group(1) if description_match else 'No Description Found'
             url = url_match.group(1) if url_match else 'No Link Found'
             
-            return LearningResource(title, description, url)
+            return LearningResource(title=title, description=description, url=url)
 
 
 
@@ -51,7 +51,7 @@ class LearningResourceLoader():
 
     def load_learning_resources(self) -> LearningResourceCollection:
         """Load the learning resources."""
-        learning_resources = LearningResourceCollection()
+        learning_resources = LearningResourceCollection(resources=[])
 
         # Loop through each file in the folder
         for filename in os.listdir(self.folder_path):

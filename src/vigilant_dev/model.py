@@ -76,16 +76,16 @@ class KMeansClustering(ClusterStrategy):
         """Cluster the vectors into n clusters using KMeans."""
         kmeans = KMeans(n_clusters)
         kmeans.fit(vectors)
-        self.labels = kmeans.labels_
+        self.cluster_labels = kmeans.labels_
         self.vectors = vectors
         self.state = 'clustered'
-        return self.labels
+        return self.cluster_labels
     
     def calculate_cluster_centroids(self):
         if self.state != 'clustered':
             raise ValueError("Data has not been clustered yet.")
         cluster_centers = {}
-        for label, vector in zip(self.labels, self.vectors):
+        for label, vector in zip(self.cluster_labels, self.vectors):
             cluster_centers.setdefault(label, []).append(vector)
         return {label: np.mean(points, axis=0) for label, points in cluster_centers.items()}
     
